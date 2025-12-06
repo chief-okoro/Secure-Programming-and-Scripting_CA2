@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Setup MFA - Secure Banking{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 600px; margin: 0 auto;">
+    <h2 style="text-align: center; margin-bottom: 30px;">Enable Multi-Factor Authentication</h2>
+
+    <div style="background-color: #d1ecf1; color: #0c5460; padding: 15px; border-radius: 4px; margin-bottom: 30px;">
+        <p style="margin: 0;"><strong>Security Notice:</strong> MFA adds an extra layer of security to your account by requiring a verification code from your mobile device.</p>
+    </div>
+
+    {% if qr_code %}
+    <div style="text-align: center; margin-bottom: 30px;">
+        <h3 style="margin-bottom: 20px;">Step 1: Scan QR Code</h3>
+        <p style="color: #666; margin-bottom: 20px;">
+            Use an authenticator app (Google Authenticator, Authy, etc.) to scan this QR code:
+        </p>
+        <img src="data:image/png;base64,{{ qr_code }}" alt="MFA QR Code" style="max-width: 300px; border: 2px solid #ddd; padding: 10px; border-radius: 8px;">
+
+        <div style="margin-top: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 4px;">
+            <p style="margin: 0; color: #666;"><strong>Can't scan?</strong> Manual entry code:</p>
+            <code style="display: block; margin-top: 10px; padding: 10px; background-color: white; border: 1px solid #ddd; border-radius: 4px; font-family: monospace;">{{ secret }}</code>
+        </div>
+    </div>
+
+    <div style="border-top: 1px solid #ddd; padding-top: 30px;">
+        <h3 style="margin-bottom: 20px; text-align: center;">Step 2: Verify Code</h3>
+        <form method="POST" action="{{ url_for('auth.mfa_setup') }}">
+            {{ form.hidden_tag() }}
+
+            <div class="form-group">
+                {{ form.token.label }}
+                {{ form.token(class="form-control", placeholder="000000", autofocus=true, style="text-align: center; font-size: 24px; letter-spacing: 5px;") }}
+                <small style="color: #666; display: block; margin-top: 5px; text-align: center;">
+                    Enter the 6-digit code from your authenticator app
+                </small>
+                {% if form.token.errors %}
+                    <div style="color: #e74c3c; font-size: 14px; margin-top: 5px; text-align: center;">
+                        {% for error in form.token.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form.submit(class="btn btn-success", style="width: 100%;") }}
+            </div>
+        </form>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="{{ url_for('account.settings') }}" style="color: #666;">Cancel</a>
+        </div>
+    </div>
+    {% else %}
+    <form method="POST" action="{{ url_for('auth.mfa_setup') }}">
+        {{ form.hidden_tag() }}
+
+        <div class="form-group">
+            {{ form.token.label }}
+            {{ form.token(class="form-control", placeholder="000000", autofocus=true) }}
+            {% if form.token.errors %}
+                <div style="color: #e74c3c; font-size: 14px; margin-top: 5px;">
+                    {% for error in form.token.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.submit(class="btn btn-success", style="width: 100%;") }}
+        </div>
+    </form>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Secure Banking{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 450px; margin: 0 auto;">
+    <h2 style="text-align: center; margin-bottom: 30px;">Login to Your Account</h2>
+
+    <form method="POST" action="{{ url_for('auth.login') }}">
+        {{ form.hidden_tag() }}
+
+        <div class="form-group">
+            {{ form.username.label }}
+            {{ form.username(class="form-control", autofocus=true) }}
+            {% if form.username.errors %}
+                <div style="color: #e74c3c; font-size: 14px; margin-top: 5px;">
+                    {% for error in form.username.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.password.label }}
+            {{ form.password(class="form-control") }}
+            {% if form.password.errors %}
+                <div style="color: #e74c3c; font-size: 14px; margin-top: 5px;">
+                    {% for error in form.password.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        {% if mfa_required %}
+        <div class="form-group">
+            {{ form.mfa_token.label }}
+            {{ form.mfa_token(class="form-control", placeholder="Enter 6-digit code") }}
+            <small style="color: #666; display: block; margin-top: 5px;">
+                Enter the verification code from your authenticator app.
+            </small>
+            {% if form.mfa_token.errors %}
+                <div style="color: #e74c3c; font-size: 14px; margin-top: 5px;">
+                    {% for error in form.mfa_token.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <div class="form-group" style="display: flex; align-items: center;">
+            {{ form.remember(style="width: auto; margin-right: 8px;") }}
+            {{ form.remember.label(style="margin: 0;") }}
+        </div>
+
+        <div class="form-group">
+            {{ form.submit(class="btn", style="width: 100%;") }}
+        </div>
+    </form>
+
+    <div style="text-align: center; margin-top: 20px;">
+        <p>Don't have an account? <a href="{{ url_for('auth.register') }}" style="color: #3498db;">Register here</a></p>
+    </div>
+</div>
+{% endblock %}

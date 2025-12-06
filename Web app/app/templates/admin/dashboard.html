@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Secure Banking{% endblock %}
+
+{% block content %}
+<h1 style="margin-bottom: 30px;">Admin Dashboard</h1>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 40px;">
+    <div class="card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+        <h3 style="margin-bottom: 10px; opacity: 0.9;">Total Users</h3>
+        <p style="font-size: 32px; font-weight: bold; margin: 0;">{{ users|length }}</p>
+    </div>
+
+    <div class="card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+        <h3 style="margin-bottom: 10px; opacity: 0.9;">Security Logs</h3>
+        <p style="font-size: 32px; font-weight: bold; margin: 0;">{{ logs|length }}</p>
+    </div>
+
+    <div class="card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
+        <h3 style="margin-bottom: 10px; opacity: 0.9;">Active Sessions</h3>
+        <p style="font-size: 32px; font-weight: bold; margin: 0;">
+            {{ users|selectattr('session_token')|list|length }}
+        </p>
+    </div>
+</div>
+
+<div class="card">
+    <h2 style="margin-bottom: 20px;">User Management</h2>
+    {% if users %}
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Name</th>
+                        <th>MFA</th>
+                        <th>Admin</th>
+                        <th>Locked</th>
+                        <th>Created</th>
+                        <th>Last Login</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td style="font-weight: 500;">{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.first_name }} {{ user.last_name }}</td>
+                        <td>
+                            {% if user.mfa_enabled %}
+                                <span style="color: #2ecc71;">✓</span>
+                            {% else %}
+                                <span style="color: #e74c3c;">✗</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if user.is_admin %}
+                                <span style="color: #3498db; font-weight: 500;">Yes</span>
+                            {% else %}
+                                <span style="color: #999;">No</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if user.account_locked %}
+                                <span style="color: #e74c3c; font-weight: 500;">Locked</span>
+                            {% else %}
+                                <span style="color: #2ecc71;">Active</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ user.created_at.strftime('%Y-%m-%d') if user.created_at else 'N/A' }}</td>
+                        <td>{{ user.last_login.strftime('%Y-%m-%d %H:%M') if user.last_login else 'Never' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p style="text-align: center; color: #666; padding: 40px 0;">No users found.</p>
+    {% endif %}
+</div>
+
+<div class="card">
+    <h2 style="margin-bottom: 20px;">Recent Security Logs</h2>
+    {% if logs %}
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>User ID</th>
+                        <th>Event</th>
+                        <th>Status</th>
+                        <th>IP Address</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logs %}
+                    <tr>
+                        <td>{{ log.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                        <td>{{ log.user_id if log.user_id else 'N/A' }}</td>
+                        <td>{{ log.event }}</td>
+                        <td>
+                            {% if log.success %}
+                                <span style="color: #2ecc71; font-weight: 500;">Success</span>
+                            {% else %}
+                                <span style="color: #e74c3c; font-weight: 500;">Failed</span>
+                            {% endif %}
+                        </td>
+                        <td style="font-family: monospace; font-size: 14px;">
+                            {{ log.ip_address if log.ip_address else 'N/A' }}
+                        </td>
+                        <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                            {{ log.details if log.details else '-' }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div style="margin-top: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 4px;">
+            <p style="margin: 0; color: #666;">
+                Showing {{ logs|length }} most recent security events. All events are permanently logged.
+            </p>
+        </div>
+    {% else %}
+        <p style="text-align: center; color: #666; padding: 40px 0;">No security logs found.</p>
+    {% endif %}
+</div>
+
+<div class="card" style="background-color: #fff3cd; border-left: 4px solid #856404;">
+    <h3 style="color: #856404; margin-bottom: 15px;">Security Monitoring</h3>
+    <p style="color: #856404; margin-bottom: 15px;">
+        This dashboard provides real-time monitoring of security events and user activity.
+    </p>
+    <ul style="color: #856404; line-height: 1.8; margin: 0;">
+        <li>Monitor failed login attempts and potential brute force attacks</li>
+        <li>Track user registrations and account changes</li>
+        <li>Review MFA setup and disable events</li>
+        <li>Identify suspicious patterns in transaction history</li>
+        <li>Manage locked accounts and security incidents</li>
+    </ul>
+</div>
+
+<div style="text-align: center; margin-top: 30px;">
+    <a href="{{ url_for('main.dashboard') }}" class="btn">Back to Dashboard</a>
+</div>
+{% endblock %}

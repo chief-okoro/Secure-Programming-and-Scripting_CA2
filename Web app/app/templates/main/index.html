@@ -1,0 +1,113 @@
+{% extends "base.html" %} {% block title %}Home - Secure Banking{% endblock %}
+{% block content %}
+<div class="card" style="text-align: center; margin-bottom: 40px">
+  <h1 style="color: #2c3e50; margin-bottom: 20px">Welcome to Secure Banking</h1>
+  <p style="font-size: 18px; color: #666; margin-bottom: 30px">
+    Your trusted partner in secure online banking with enterprise-grade
+    protection.
+  </p>
+
+  {% if not current_user.is_authenticated %}
+  <div
+    style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap"
+  >
+    <a href="{{ url_for('auth.login') }}" class="btn" style="min-width: 150px"
+      >Login</a
+    >
+    <a
+      href="{{ url_for('auth.register') }}"
+      class="btn btn-success"
+      style="min-width: 150px"
+      >Register</a
+    >
+  </div>
+  {% else %}
+  <div
+    style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap"
+  >
+    <a
+      href="{{ url_for('main.dashboard') }}"
+      class="btn"
+      style="min-width: 150px"
+      >Go to Dashboard</a
+    >
+  </div>
+  {% endif %}
+</div>
+
+<div
+  style="
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-bottom: 40px;
+  "
+>
+  <div class="card">
+    <h3 style="color: #3498db; margin-bottom: 15px">
+      SQL Injection Prevention
+    </h3>
+    <p style="color: #666">
+      Protected with SQLAlchemy ORM and parameterized queries to prevent
+      malicious database access.
+    </p>
+  </div>
+
+  <div class="card">
+    <h3 style="color: #3498db; margin-bottom: 15px">XSS Protection</h3>
+    <p style="color: #666">
+      Input sanitization and Content Security Policy headers prevent cross-site
+      scripting attacks.
+    </p>
+  </div>
+
+  <div class="card">
+    <h3 style="color: #3498db; margin-bottom: 15px">Secure Authentication</h3>
+    <p style="color: #666">
+      Password hashing with bcrypt, MFA support, and session management protect
+      your account.
+    </p>
+  </div>
+
+  <div class="card">
+    <h3 style="color: #3498db; margin-bottom: 15px">HTTPS Enforcement</h3>
+    <p style="color: #666">
+      Flask-Talisman enforces HTTPS connections with strict transport security
+      headers.
+    </p>
+  </div>
+
+  <div class="card">
+    <h3 style="color: #3498db; margin-bottom: 15px">Rate Limiting</h3>
+    <p style="color: #666">
+      Protect against brute force attacks with intelligent rate limiting on
+      sensitive endpoints.
+    </p>
+  </div>
+
+  <div class="card">
+    <h3 style="color: #3498db; margin-bottom: 15px">Data Encryption</h3>
+    <p style="color: #666">
+      Sensitive data encrypted at rest using industry-standard cryptographic
+      algorithms.
+    </p>
+  </div>
+</div>
+
+<div class="card" style="background-color: #f8f9fa">
+  <h2 style="text-align: center; margin-bottom: 20px">
+    Enterprise-Grade Security Features
+  </h2>
+  <ul style="list-style-position: inside; color: #555; line-height: 2">
+    <li>Multi-factor authentication (MFA) with TOTP</li>
+    <li>Account lockout after failed login attempts</li>
+    <li>Comprehensive audit logging</li>
+    <li>CSRF protection on all forms</li>
+    <li>Session security and timeout management</li>
+    <li>Security headers and Content Security Policy</li>
+    <li>Input validation and sanitization</li>
+    <li>Encrypted sensitive data storage</li>
+  </ul>
+</div>
+
+{% if not current_user.is_authenticated %} {% endif %} {% endblock %}

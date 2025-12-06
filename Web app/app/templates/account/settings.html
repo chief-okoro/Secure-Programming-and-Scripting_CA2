@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Account Settings - Secure Banking{% endblock %}
+
+{% block content %}
+<h1 style="margin-bottom: 30px;">Account Settings</h1>
+
+<div class="card">
+    <h2 style="margin-bottom: 20px;">Profile Information</h2>
+    <div style="display: grid; grid-template-columns: 200px 1fr; gap: 15px; margin-bottom: 30px;">
+        <strong>Username:</strong>
+        <span>{{ current_user.username }}</span>
+
+        <strong>Email:</strong>
+        <span>{{ current_user.email }}</span>
+
+        <strong>Full Name:</strong>
+        <span>{{ current_user.first_name }} {{ current_user.last_name }}</span>
+
+        <strong>Account Created:</strong>
+        <span>{{ current_user.created_at.strftime('%Y-%m-%d') if current_user.created_at else 'N/A' }}</span>
+
+        <strong>Last Login:</strong>
+        <span>{{ current_user.last_login.strftime('%Y-%m-%d %H:%M') if current_user.last_login else 'N/A' }}</span>
+    </div>
+</div>
+
+<div class="card">
+    <h2 style="margin-bottom: 20px;">Security Settings</h2>
+
+    <div style="border: 1px solid #ddd; border-radius: 4px; padding: 20px; margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h3 style="margin-bottom: 10px;">Multi-Factor Authentication (MFA)</h3>
+                <p style="color: #666; margin: 0;">
+                    {% if current_user.mfa_enabled %}
+                        <span style="color: #2ecc71; font-weight: 500;">Enabled</span> - Your account is protected with two-factor authentication
+                    {% else %}
+                        <span style="color: #f39c12; font-weight: 500;">Not Enabled</span> - Add an extra layer of security to your account
+                    {% endif %}
+                </p>
+            </div>
+            <div>
+                {% if current_user.mfa_enabled %}
+                    <form method="POST" action="{{ url_for('auth.mfa_disable') }}" style="display: inline;">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to disable MFA?')">
+                            Disable MFA
+                        </button>
+                    </form>
+                {% else %}
+                    <a href="{{ url_for('auth.mfa_setup') }}" class="btn btn-success">Enable MFA</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div style="border: 1px solid #ddd; border-radius: 4px; padding: 20px; margin-bottom: 20px;">
+        <h3 style="margin-bottom: 10px;">Password</h3>
+        <p style="color: #666; margin-bottom: 15px;">Last changed: Never</p>
+        <button class="btn" disabled>Change Password</button>
+        <small style="color: #999; display: block; margin-top: 5px;">Feature coming soon</small>
+    </div>
+
+    <div style="border: 1px solid #ddd; border-radius: 4px; padding: 20px;">
+        <h3 style="margin-bottom: 10px;">Session Security</h3>
+        <p style="color: #666; margin-bottom: 15px;">
+            <strong>Session Status:</strong> <span style="color: #2ecc71;">Active</span><br>
+            <strong>Session Token:</strong> {{ current_user.session_token[:20] if current_user.session_token else 'N/A' }}...
+        </p>
+        <p style="color: #666; margin: 0;">
+            Sessions automatically expire after 30 minutes of inactivity.
+        </p>
+    </div>
+</div>
+
+<div class="card" style="background-color: #fff3cd; border-left: 4px solid #856404;">
+    <h3 style="color: #856404; margin-bottom: 10px;">Security Recommendations</h3>
+    <ul style="color: #856404; line-height: 1.8;">
+        {% if not current_user.mfa_enabled %}
+        <li>Enable Multi-Factor Authentication for enhanced security</li>
+        {% endif %}
+        <li>Use a strong, unique password for your account</li>
+        <li>Never share your password or MFA codes with anyone</li>
+        <li>Review your transaction history regularly</li>
+        <li>Log out when using shared or public computers</li>
+    </ul>
+</div>
+
+<div style="text-align: center; margin-top: 30px;">
+    <a href="{{ url_for('main.dashboard') }}" class="btn">Back to Dashboard</a>
+</div>
+{% endblock %}

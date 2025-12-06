@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Secure Banking{% endblock %}
+
+{% block content %}
+<h1 style="margin-bottom: 30px;">Dashboard</h1>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 40px;">
+    <div class="card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+        <h3 style="margin-bottom: 10px; opacity: 0.9;">Total Balance</h3>
+        <p style="font-size: 32px; font-weight: bold; margin: 0;">${{ "%.2f"|format(total_balance) }}</p>
+    </div>
+
+    <div class="card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+        <h3 style="margin-bottom: 10px; opacity: 0.9;">Active Accounts</h3>
+        <p style="font-size: 32px; font-weight: bold; margin: 0;">{{ accounts|length }}</p>
+    </div>
+
+    <div class="card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
+        <h3 style="margin-bottom: 10px; opacity: 0.9;">Recent Transactions</h3>
+        <p style="font-size: 32px; font-weight: bold; margin: 0;">{{ transactions|length }}</p>
+    </div>
+</div>
+
+<div class="card">
+    <h2 style="margin-bottom: 20px;">Your Accounts</h2>
+    {% if accounts %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Account Number</th>
+                    <th>Account Type</th>
+                    <th>Balance</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for account in accounts %}
+                <tr>
+                    <td>{{ account.account_number }}</td>
+                    <td>{{ account.account_type }}</td>
+                    <td>${{ "%.2f"|format(account.balance) }}</td>
+                    <td>
+                        <span style="color: #2ecc71; font-weight: 500;">Active</span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p style="text-align: center; color: #666; padding: 40px 0;">No accounts found. Contact support to open an account.</p>
+    {% endif %}
+</div>
+
+<div class="card">
+    <h2 style="margin-bottom: 20px;">Recent Transactions</h2>
+    {% if transactions %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Type</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transaction in transactions %}
+                <tr>
+                    <td>{{ transaction.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td>{{ transaction.description }}</td>
+                    <td style="{% if transaction.amount > 0 %}color: #2ecc71;{% else %}color: #e74c3c;{% endif %} font-weight: 500;">
+                        {% if transaction.amount > 0 %}+{% endif %}${{ "%.2f"|format(transaction.amount) }}
+                    </td>
+                    <td>{{ transaction.transaction_type }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="{{ url_for('account.transactions') }}" class="btn">View All Transactions</a>
+        </div>
+    {% else %}
+        <p style="text-align: center; color: #666; padding: 40px 0;">No transactions yet.</p>
+    {% endif %}
+</div>
+
+<div class="card" style="background-color: #d1ecf1; border-left: 4px solid #0c5460;">
+    <h3 style="color: #0c5460; margin-bottom: 10px;">Security Status</h3>
+    <ul style="list-style: none; color: #0c5460;">
+        <li style="margin-bottom: 10px;">
+            <strong>MFA:</strong>
+            {% if current_user.mfa_enabled %}
+                <span style="color: #2ecc71;">Enabled</span>
+            {% else %}
+                <span style="color: #f39c12;">Not Enabled</span> -
+                <a href="{{ url_for('auth.mfa_setup') }}" style="color: #0c5460; text-decoration: underline;">Enable MFA</a>
+            {% endif %}
+        </li>
+        <li style="margin-bottom: 10px;">
+            <strong>Session:</strong> <span style="color: #2ecc71;">Active</span>
+        </li>
+        <li>
+            <strong>Last Login:</strong> {{ current_user.last_login.strftime('%Y-%m-%d %H:%M') if current_user.last_login else 'N/A' }}
+        </li>
+    </ul>
+</div>
+{% endblock %}

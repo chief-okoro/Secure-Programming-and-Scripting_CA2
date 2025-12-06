@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}Security Demo - Secure Banking{% endblock %}
+
+{% block content %}
+<h1 style="margin-bottom: 30px;">Security Demonstration</h1>
+
+<div class="card">
+    <h2 style="margin-bottom: 20px;">SQL Injection Prevention</h2>
+    <p style="color: #666; margin-bottom: 20px;">
+        This application uses SQLAlchemy ORM with parameterized queries to prevent SQL injection attacks.
+    </p>
+
+    <div style="background-color: #f8f9fa; padding: 20px; border-radius: 4px; margin-bottom: 20px;">
+        <h3 style="color: #e74c3c; margin-bottom: 15px;">Vulnerable Code (Never use this):</h3>
+        <pre style="background: white; padding: 15px; border-radius: 4px; overflow-x: auto;"><code>query = f"SELECT * FROM users WHERE username='{username}' AND password='{password}'"
+cursor.execute(query)  # VULNERABLE!</code></pre>
+        <p style="color: #666; margin-top: 10px;">Attack example: username = "admin' OR '1'='1"</p>
+    </div>
+
+    <div style="background-color: #d4edda; padding: 20px; border-radius: 4px;">
+        <h3 style="color: #2ecc71; margin-bottom: 15px;">Secure Code (Always use this):</h3>
+        <pre style="background: white; padding: 15px; border-radius: 4px; overflow-x: auto;"><code>user = User.query.filter_by(username=username).first()
+if user and user.check_password(password):
+    # Login successful</code></pre>
+        <p style="color: #155724; margin-top: 10px;">SQLAlchemy automatically escapes parameters and prevents injection.</p>
+    </div>
+</div>
+
+<div class="card">
+    <h2 style="margin-bottom: 20px;">XSS (Cross-Site Scripting) Prevention</h2>
+    <p style="color: #666; margin-bottom: 20px;">
+        This application sanitizes all user input and uses Content Security Policy headers to prevent XSS attacks.
+    </p>
+
+    <div style="background-color: #f8f9fa; padding: 20px; border-radius: 4px; margin-bottom: 20px;">
+        <h3 style="color: #e74c3c; margin-bottom: 15px;">Vulnerable Code:</h3>
+        <pre style="background: white; padding: 15px; border-radius: 4px; overflow-x: auto;"><code>&lt;div&gt;{{ user_input | safe }}&lt;/div&gt;  {# DANGEROUS! #}</code></pre>
+        <p style="color: #666; margin-top: 10px;">Attack example: user_input = "&lt;script&gt;alert('XSS')&lt;/script&gt;"</p>
+    </div>
+
+    <div style="background-color: #d4edda; padding: 20px; border-radius: 4px;">
+        <h3 style="color: #2ecc71; margin-bottom: 15px;">Secure Code:</h3>
+        <pre style="background: white; padding: 15px; border-radius: 4px; overflow-x: auto;"><code># In Python - sanitize input
+clean_input = sanitize_input(user_input)
+
+# In template - Jinja2 auto-escapes
+&lt;div&gt;{{ user_input }}&lt;/div&gt;</code></pre>
+        <p style="color: #155724; margin-top: 10px;">Jinja2 automatically escapes HTML, preventing script execution.</p>
+    </div>
+</div>
+
+<div class="card">
+    <h2 style="margin-bottom: 20px;">CSRF Protection</h2>
+    <p style="color: #666; margin-bottom: 20px;">
+        All forms include CSRF tokens to prevent cross-site request forgery attacks.
+    </p>
+
+    <div style="background-color: #d4edda; padding: 20px; border-radius: 4px;">
+        <h3 style="color: #2ecc71; margin-bottom: 15px;">Protected Form:</h3>
+        <pre style="background: white; padding: 15px; border-radius: 4px; overflow-x: auto;"><code>&lt;form method="POST"&gt;
+    {{ form.hidden_tag() }}  {# Includes CSRF token #}
+    {{ form.username() }}
+    {{ form.submit() }}
+&lt;/form&gt;</code></pre>
+        <p style="color: #155724; margin-top: 10px;">Flask-WTF automatically validates CSRF tokens on submission.</p>
+    </div>
+</div>
+
+<div class="card">
+    <h2 style="margin-bottom: 20px;">Rate Limiting</h2>
+    <p style="color: #666; margin-bottom: 20px;">
+        Sensitive endpoints are rate limited to prevent brute force attacks.
+    </p>
+
+    <div style="background-color: #d4edda; padding: 20px; border-radius: 4px;">
+        <h3 style="color: #2ecc71; margin-bottom: 15px;">Rate Limited Endpoint:</h3>
+        <pre style="background: white; padding: 15px; border-radius: 4px; overflow-x: auto;"><code>@bp.route('/login', methods=['POST'])
+@limiter.limit("10 per minute")  # Max 10 attempts per minute
+def login():
+    # Login logic</code></pre>
+        <p style="color: #155724; margin-top: 10px;">Excessive requests receive a 429 (Too Many Requests) response.</p>
+    </div>
+</div>
+
+<div class="card">
+    <h2 style="margin-bottom: 20px;">Secure Password Storage</h2>
+    <p style="color: #666; margin-bottom: 20px;">
+        Passwords are hashed using bcrypt with salt, never stored in plain text.
+    </p>
+
+    <div style="background-color: #d4edda; padding: 20px; border-radius: 4px;">
+        <h3 style="color: #2ecc71; margin-bottom: 15px;">Secure Password Handling:</h3>
+        <pre style="background: white; padding: 15px; border-radius: 4px; overflow-x: auto;"><code>from werkzeug.security import generate_password_hash, check_password_hash
+
+# Store password
+password_hash = generate_password_hash(password, method='bcrypt')
+
+# Verify password
+is_valid = check_password_hash(stored_hash, provided_password)</code></pre>
+        <p style="color: #155724; margin-top: 10px;">Bcrypt is computationally expensive, making brute force attacks impractical.</p>
+    </div>
+</div>
+
+<div style="text-align: center; margin-top: 40px;">
+    <a href="{{ url_for('main.index') }}" class="btn">Back to Home</a>
+</div>
+{% endblock %}

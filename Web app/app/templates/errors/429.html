@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}429 - Too Many Requests{% endblock %}
+
+{% block content %}
+<div class="card" style="text-align: center; max-width: 600px; margin: 50px auto;">
+    <h1 style="color: #f39c12; font-size: 72px; margin-bottom: 20px;">429</h1>
+    <h2 style="margin-bottom: 20px;">Too Many Requests</h2>
+    <p style="color: #666; margin-bottom: 30px;">
+        You've made too many requests in a short period of time. This is a security measure to protect our systems.
+    </p>
+    <p style="color: #666; margin-bottom: 30px;">
+        Please wait a few minutes before trying again.
+    </p>
+    <a href="{{ url_for('main.index') }}" class="btn">Return to Home</a>
+</div>
+{% endblock %}

@@ -1,0 +1,8 @@
+{
+  "target": "http://localhost:5000",
+  "scan_date": "2025-12-06T14:13:23.640787",
+  "duration_seconds": 240.84,
+  "requests_sent": 117,
+  "vulnerabilities_found": 0,
+  "vulnerabilities": []
+}

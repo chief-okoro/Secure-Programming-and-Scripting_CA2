@@ -1,0 +1,140 @@
+{
+  "timestamp": "2025-12-06T14:14:32.094020",
+  "sast_results": {
+    "tool": "Bandit (SAST)",
+    "timestamp": "2025-12-06T14:13:50.416448",
+    "source_path": "../web_application/app",
+    "vulnerabilities": [],
+    "statistics": {}
+  },
+  "dast_results": {
+    "tool": "OWASP ZAP (DAST)",
+    "timestamp": "2025-12-06T14:13:52.856163",
+    "target_url": "http://localhost:5000",
+    "vulnerabilities": [
+      {
+        "severity": "MEDIUM",
+        "type": "Missing Security Header",
+        "description": "Missing X-Frame-Options header (Clickjacking protection)",
+        "url": "http://localhost:5000",
+        "recommendation": "Add X-Frame-Options header to responses"
+      },
+      {
+        "severity": "MEDIUM",
+        "type": "Missing Security Header",
+        "description": "Missing X-Content-Type-Options header (MIME sniffing protection)",
+        "url": "http://localhost:5000",
+        "recommendation": "Add X-Content-Type-Options header to responses"
+      },
+      {
+        "severity": "MEDIUM",
+        "type": "Missing Security Header",
+        "description": "Missing Strict-Transport-Security header (HTTPS enforcement)",
+        "url": "http://localhost:5000",
+        "recommendation": "Add Strict-Transport-Security header to responses"
+      },
+      {
+        "severity": "MEDIUM",
+        "type": "Missing Security Header",
+        "description": "Missing Content-Security-Policy header (XSS protection)",
+        "url": "http://localhost:5000",
+        "recommendation": "Add Content-Security-Policy header to responses"
+      },
+      {
+        "severity": "MEDIUM",
+        "type": "Missing Security Header",
+        "description": "Missing X-XSS-Protection header (XSS filter)",
+        "url": "http://localhost:5000",
+        "recommendation": "Add X-XSS-Protection header to responses"
+      },
+      {
+        "severity": "LOW",
+        "type": "Information Disclosure",
+        "description": "Server version disclosed: Werkzeug/3.0.1 Python/3.13.5",
+        "url": "http://localhost:5000",
+        "recommendation": "Remove or obfuscate Server header"
+      },
+      {
+        "severity": "HIGH",
+        "type": "Insecure Transport",
+        "description": "Application not using HTTPS",
+        "url": "http://localhost:5000",
+        "recommendation": "Enforce HTTPS for all connections"
+      }
+    ],
+    "statistics": {
+      "total_issues": 7,
+      "high_severity": 1,
+      "medium_severity": 5,
+      "low_severity": 1
+    }
+  },
+  "comparison": {
+    "methodology": {
+      "SAST": {
+        "approach": "White-box testing (source code analysis)",
+        "timing": "Early in development (pre-deployment)",
+        "coverage": "All code paths (100% code coverage possible)",
+        "false_positives": "Higher rate",
+        "speed": "Fast",
+        "cost": "Low",
+        "expertise_required": "Medium"
+      },
+      "DAST": {
+        "approach": "Black-box testing (running application)",
+        "timing": "Later in development (post-deployment)",
+        "coverage": "Only reachable code paths",
+        "false_positives": "Lower rate",
+        "speed": "Slower",
+        "cost": "Higher",
+        "expertise_required": "Low to Medium"
+      }
+    },
+    "results_summary": {
+      "SAST": {},
+      "DAST": {
+        "total_issues": 7,
+        "high_severity": 1,
+        "medium_severity": 5,
+        "low_severity": 1
+      }
+    },
+    "advantages": {
+      "SAST": [
+        "Finds vulnerabilities early in SDLC",
+        "Can analyze entire codebase",
+        "Provides exact location in source code",
+        "No need for running application",
+        "Fast execution"
+      ],
+      "DAST": [
+        "Tests real running application",
+        "Finds runtime and configuration issues",
+        "No source code access needed",
+        "Lower false positive rate",
+        "Tests actual attack scenarios"
+      ]
+    },
+    "disadvantages": {
+      "SAST": [
+        "Higher false positive rate",
+        "May miss runtime issues",
+        "Requires source code access",
+        "May miss configuration issues",
+        "Language/framework specific"
+      ],
+      "DAST": [
+        "Cannot test all code paths",
+        "Slower execution",
+        "Later in development cycle",
+        "May miss logical flaws in code",
+        "Requires running application"
+      ]
+    },
+    "recommendations": {
+      "best_practice": "Use both SAST and DAST in CI/CD pipeline",
+      "integration": "SAST in development, DAST in staging/pre-production",
+      "complementary": "Tools complement each other, covering different vulnerability types"
+    }
+  }
+}
